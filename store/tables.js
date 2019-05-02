@@ -1,5 +1,7 @@
 import alasql from 'alasql';
-import encoding from 'encoding-japanese';
+import xlsx from 'xlsx';
+
+alasql['private'].externalXlsxLib = xlsx;
 
 
 export const state = () => ({
@@ -16,11 +18,11 @@ export const mutations = {
 };
 
 
-function loadCSV(name, data) {
+function load(name, query, params) {
 	alasql('BEGIN TRANSACTION');
 	try {
 		alasql(`CREATE TABLE ${name}`);
-		alasql(`SELECT * INTO ${name} FROM CSV(?, {headers:true,separator:","})`, encoding.convert(new Uint8Array(data), {type: 'string'}));
+		alasql(query, params);
 		alasql('COMMIT TRANSACTION');
 	} catch(e) {
 		alasql('ROLLBACK TRANSACTION');
@@ -29,11 +31,41 @@ function loadCSV(name, data) {
 }
 
 
+function loadCSV(name, url) {
+	load(name, `SELECT * INTO ${name} FROM CSV(?, {autoExt:false,headers:true,separator:","})`, [url]);
+}
+
+
+function loadTSV(name, url) {
+	load(name, `SELECT * INTO ${name} FROM TSV(?, {autoExt:false,headers:true})`, [url]);
+}
+
+
+function loadXLS(name, url) {
+	load(name, `SELECT * INTO ${name} FROM XLS(?, {autoExt:false,headers:true})`, [url]);
+}
+
+
+function loadXLSX(name, url) {
+	load(name, `SELECT * INTO ${name} FROM XLSX(?, {autoExt:false,headers:true})`, [url]);
+}
+
+
 export const actions = {
-	load({commit}, {name, type, data}) {
+	load({commit}, {name, type, url}) {
 		switch (type) {
 		case 'text/csv':
-			loadCSV(name, data);
+		case 'text/plain':
+			loadCSV(name, url);
+			break;
+		case 'text/tab-separated-values':
+			loadTSV(name, url);
+			break;
+		case 'application/vnd.ms-excel':
+			loadXLS(name, url);
+			break;
+		case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+			loadXLSX(name, url);
 			break;
 		default:
 			throw 'unsupported type';
