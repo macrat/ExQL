@@ -1,28 +1,34 @@
 <template>
-	<v-card flat>
-		<v-tabs v-model=active>
-			<v-tab><v-icon>table_chart</v-icon></v-tab>
-			<v-tab><v-icon>show_chart</v-icon></v-tab>
-			<v-tab><v-icon>bar_chart</v-icon></v-tab>
-			<v-tab><v-icon>bubble_chart</v-icon></v-tab>
-			<v-tab><v-icon>pie_chart</v-icon></v-tab>
-			<v-spacer />
-			<v-btn icon @click.stop=download><v-icon>save_alt</v-icon></v-btn>
-			<v-btn icon @click.stop="$emit('remove')"><v-icon>close</v-icon></v-btn>
-		</v-tabs>
+	<v-flex v-if=!removeTimer>
+		<v-card flat>
+			<v-tabs v-model=active>
+				<v-tab><v-icon>table_chart</v-icon></v-tab>
+				<v-tab><v-icon>show_chart</v-icon></v-tab>
+				<v-tab><v-icon>bar_chart</v-icon></v-tab>
+				<v-tab><v-icon>bubble_chart</v-icon></v-tab>
+				<v-tab><v-icon>pie_chart</v-icon></v-tab>
+				<v-spacer />
+				<v-btn icon @click.stop=download><v-icon>save_alt</v-icon></v-btn>
+				<v-btn icon @click.stop="startRemove()"><v-icon>close</v-icon></v-btn>
+			</v-tabs>
 
-		<v-card-text>
-			<table-viewer :value=result v-if="active === 0" />
-			<line-viewer :value=result :x.sync=label :ys.sync=values v-else-if="active === 1" />
-			<bar-viewer :value=result :x.sync=label :ys.sync=values v-else-if="active === 2" />
-			<bubble-viewer :value=result v-bind.sync=bubbleOption v-else-if="active === 3" />
-			<doughnut-viewer :value=result :label.sync=label :values.sync=values v-else-if="active === 4" />
+			<v-card-text>
+				<table-viewer :value=result v-if="active === 0" />
+				<line-viewer :value=result :x.sync=label :ys.sync=values v-else-if="active === 1" />
+				<bar-viewer :value=result :x.sync=label :ys.sync=values v-else-if="active === 2" />
+				<bubble-viewer :value=result v-bind.sync=bubbleOption v-else-if="active === 3" />
+				<doughnut-viewer :value=result :label.sync=label :values.sync=values v-else-if="active === 4" />
 
-			<v-textarea :value=value @input="$emit('change', $event)" />
-		</v-card-text>
+				<v-textarea :value=value @input="$emit('change', $event)" />
+			</v-card-text>
 
-		<a style="display: none" :href=downloader.url :download=downloader.name ref=downloader />
-	</v-card>
+			<a style="display: none" :href=downloader.url :download=downloader.name ref=downloader />
+		</v-card>
+	</v-flex>
+	<v-snackbar v-else :value=true :bottom=true :timeout=3000>
+		Query card has removed
+		<v-btn flat @click="cancelRemove()">dismiss</v-btn>
+	</v-snackbar>
 </template>
 
 <script>
@@ -59,6 +65,7 @@ export default {
 			bubbleOption: {x: null, y: null, r: null, c: null},
 			lastValidCols: new Set(),
 			downloader: {url: '', name: ''},
+			removeTimer: null,
 		};
 	},
 	computed: {
@@ -157,6 +164,13 @@ export default {
 			} else {
 				alasql(`SELECT * INTO CSV("${fname}.csv", {headers:true, separator:","}) FROM ?`, [this.result]);
 			}
+		},
+		startRemove() {
+			this.removeTimer = setTimeout(() => this.$emit('remove'), 4000);
+		},
+		cancelRemove() {
+			clearTimeout(this.removeTimer);
+			this.removeTimer = null;
 		},
 	},
 };

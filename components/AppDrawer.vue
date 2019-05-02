@@ -9,15 +9,21 @@
 				<v-list-tile-content>IMPORT</v-list-tile-content>
 			</v-list-tile>
 
-			<v-list-tile @click.stop="$emit('open', name)" v-for="name in $store.state.tables.list">
-				<v-list-tile-action></v-list-tile-action>
+			<template v-for="name in $store.state.tables.list">
+				<v-list-tile @click.stop="$emit('open', name)" v-if="removeTimer[name] === undefined">
+					<v-list-tile-action></v-list-tile-action>
 
-				<v-list-tile-content v-if="remove[name] === undefined">{{ name }}</v-list-tile-content>
-				<v-list-tile-content v-else><v-progress-linear :value="remove[name]" /></v-list-tile-content>
+					<v-list-tile-content>{{ name }}</v-list-tile-content>
 
-				<v-list-tile-action v-if="remove[name] === undefined"><v-btn icon @click.stop="startRemove(name)"><v-icon color=gray>delete</v-icon></v-btn></v-list-tile-action>
-				<v-list-tile-action v-else><v-btn icon @click.stop="cancelRemove(name)"><v-icon color=gray>cancel</v-icon></v-btn></v-list-tile-action>
-			</v-list-tile>
+					<v-list-tile-action>
+						<v-btn icon @click.stop="startRemove(name)"><v-icon color=gray>delete</v-icon></v-btn>
+					</v-list-tile-action>
+				</v-list-tile>
+				<v-snackbar v-else :value=true :bottom=true :left=true :timeout=3000>
+					Table has removed
+					<v-btn flat @click="cancelRemove(name)">dismiss</v-btn>
+				</v-snackbar>
+			</template>
 		</v-list>
 	</v-navigation-drawer>
 </template>
@@ -27,32 +33,19 @@ export default {
 	props: ['drawer'],
 	data() {
 		return {
-			remove: {},
+			removeTimer: {},
 		};
 	},
 	methods: {
 		startRemove(name) {
-			this.$set(this.remove, name, 0);
-			const startTime = new Date();
-
-			const update = () => {
-				if (this.remove[name] === undefined) {
-					return;
-				}
-
-				this.$set(this.remove, name, (new Date() - startTime) / 20);
-
-				if (this.remove[name] < 100) {
-					setTimeout(update, 100);
-				} else {
-					this.$store.dispatch('tables/remove', {name});
-					this.$set(this.remove, name, undefined);
-				}
-			}
-			update();
+			this.$set(this.removeTimer, name, setTimeout(() => {
+				this.$store.dispatch('tables/remove', {name});
+				this.$set(this.removeTimer, name, undefined);
+			}, 4000));
 		},
 		cancelRemove(name) {
-			this.$set(this.remove, name, undefined);
+			clearTimeout(this.removeTimer[name]);
+			this.$set(this.removeTimer, name, undefined);
 		},
 	},
 };

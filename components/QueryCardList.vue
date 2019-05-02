@@ -1,14 +1,12 @@
 <template>
 	<v-container fluid grid-list-md>
 		<v-layout column>
-			<v-flex v-for="card in cards" :key=card.id max-width=120em>
-				<query-card
-					:value=card.query
-					@change="card.query = $event"
-					@remove="remove(card.id)"
-					:data-card-id=card.id
-					/>
-			</v-flex>
+			<query-card
+				v-for="card in cards" :key=card.id
+				:value=card.query
+				@change="card.query = $event"
+				@remove="remove(card.id)"
+				:data-card-id=card.id />
 		</v-layout>
 
 		<v-fab-transition>
