@@ -11,7 +11,7 @@
 			<query-card-list ref=cards />
 		</v-content>
 
-		<table-loader ref=loader />
+		<table-loader ref=loader @loaded="$refs.cards.create($event)" />
 	</v-app>
 </template>
 

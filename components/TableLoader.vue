@@ -85,6 +85,7 @@ export default {
 		async storeTable() {
 			this.$store.dispatch('tables/load', {file: this.file, options: this.options});
 			this.shown = false;
+			this.$emit('loaded', this.file.name);
 		},
 		async loaded() {
 			this.shown = true;
