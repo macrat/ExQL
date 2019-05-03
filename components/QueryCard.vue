@@ -25,7 +25,7 @@
 			<a style="display: none" :href=downloader.url :download=downloader.name ref=downloader />
 		</v-card>
 	</v-flex>
-	<v-snackbar v-else :value=true :bottom=true :timeout=3000>
+	<v-snackbar v-else :value=true bottom :timeout=3000>
 		Query card has removed
 		<v-btn flat @click="cancelRemove()">dismiss</v-btn>
 	</v-snackbar>
@@ -41,68 +41,31 @@ import BubbleViewer from '~/components/BubbleViewer';
 import DoughnutViewer from '~/components/DoughnutViewer';
 
 
-function getType(obj) {
-	const result = typeof obj;
-	if (result !== 'object') {
-		return result;
-	}
-	if(obj instanceof Date) {
-		return 'date';
-	}
-	return result;
-}
-
-
 export default {
 	props: ['value'],
 	components: {TableViewer, LineViewer, BarViewer, BubbleViewer, DoughnutViewer},
-	data() {
-		return {
-			active: 1,
-			label: null,
-			values: [],
-			bubbleOption: {x: null, y: null, r: null, c: null},
-			lastValidCols: new Set(),
-			downloader: {url: '', name: ''},
-			removeTimer: null,
-		};
-	},
+	data: () => ({
+		active: 1,
+		label: null,
+		values: [],
+		bubbleOption: {x: null, y: null, r: null, c: null},
+		lastValidCols: new Set(),
+		downloader: {url: '', name: ''},
+		removeTimer: null,
+	}),
 	asyncComputed: {
 		result: {
 			default: Object.assign([], {columns: []}),
 			async get () {
 				this.$store.state.tables.stateID;  // just reference
 
-				let result = [];
 				try {
-					result = await this.$sql.execute(this.value);
+					return await this.$sql.execute(this.value);
 				} catch(e) {
 					console.error(e);
+					return Object.assign([], {columns: []});
 				}
-				result.columns = result.length > 0 ? Object.keys(result[0]) : [];
-				return result;
 			},
-		},
-	},
-	computed: {
-		types() {
-			if (this.result.length === 0) {
-				return [];
-			}
-
-			const types = Object.entries(this.result[0]).map(([name, val]) => ({name: name, type: getType(val)}));
-			for (let x in this.result.slice(1)) {
-				for (let i in types) {
-					if (getType(x[types[i].name]) !== types[i].type
-					&& x[types[i].name] !== null
-					&& x[types[i].name] !== undefined) {
-
-						types[i].type = 'mixed';
-					}
-				}
-			}
-
-			return types;
 		},
 	},
 	watch: {
@@ -120,17 +83,17 @@ export default {
 			}
 
 			const oldCols = this.lastValidCols;
-			const newCols = new Set(val.columns);
-			const diffs = this.types.filter(x => x.type === 'number' || x.type === 'date').map(x => x.name).filter(x => !oldCols.has(x));
+			const newCols = new Set(val.columns.map(x => x.name));
+			const diffs = val.columns.filter(x => x.type === 'number' || x.type === 'date').map(x => x.name).filter(x => !oldCols.has(x));
 
 			if (!this.label || !newCols.has(this.label)) {
-				const strings = this.types.filter(x => x.type === 'string');
+				const strings = val.columns.filter(x => x.type === 'string');
 				if (strings.length > 0) {
 					this.label = strings[0].name;
 				}
 			}
 			if (!this.bubbleOption.c || !newCols.has(this.bubbleOption.c)) {
-				const strings = this.types.filter(x => x.type === 'string');
+				const strings = val.columns.filter(x => x.type === 'string');
 				if (strings.length > 0) {
 					this.bubbleOption.c = strings[0].name;
 				}

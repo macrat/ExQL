@@ -1,6 +1,7 @@
 <template>
 	<v-app dark>
 		<app-header :drawer.sync=drawer />
+
 		<app-drawer
 			:drawer=drawer
 			@upload="$refs.loader.load()"
@@ -23,8 +24,8 @@ import TableLoader from '~/components/TableLoader';
 
 export default {
 	components: {AppHeader, AppDrawer, QueryCardList, TableLoader},
-	data() {
-		return {drawer: true};
-	},
+	data: () => ({
+		drawer: true,
+	}),
 };
 </script>

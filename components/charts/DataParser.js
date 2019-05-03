@@ -19,7 +19,6 @@ export function DoughnutData(data, selectors, opacities) {
 		return {labels: [], datasets: []};
 	}
 
-console.log(selectors);
 	return {
 		labels: selectors.label ? data.map(d => d[selectors.label]) : data.map((_, i) => i),
 		datasets: (selectors.values || []).map(sel => ({

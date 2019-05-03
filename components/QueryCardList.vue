@@ -25,14 +25,12 @@ import QueryCard from '~/components/QueryCard';
 
 export default {
 	components: {QueryCard},
-	data() {
-		return {
-			cards: [
-				{id: 0, query: '-- Write SQL here --\n\nSELECT NOW() AS date'},
-			],
-			lastId: 0,
-		};
-	},
+	data: () => ({
+		cards: [
+			{id: 0, query: '-- Write SQL here --\n\nSELECT NOW() AS date'},
+		],
+		lastId: 0,
+	}),
 	methods: {
 		remove(id) {
 			this.cards = this.cards.filter(x => x.id !== id);

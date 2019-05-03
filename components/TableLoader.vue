@@ -57,19 +57,17 @@ import path from 'path';
 
 
 export default {
-	data() {
-		return {
-			shown: false,
-			file: {name: 'debug.csv'},
-			data: [],
-			options: {
-				headers: true,
-				separator: ',',
-				columns: {},
-			},
-			valid: true,
-		};
-	},
+	data: () => ({
+		shown: false,
+		file: {name: 'debug.csv'},
+		data: [],
+		options: {
+			headers: true,
+			separator: ',',
+			columns: {},
+		},
+		valid: true,
+	}),
 	computed: {
 		headers() {
 			return Object.entries(this.options.columns).map(([from, to]) => ({text: to, value: from, sortable: false})).filter(x => x.text);

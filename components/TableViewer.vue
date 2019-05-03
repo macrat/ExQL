@@ -1,7 +1,7 @@
 <template>
 	<v-data-table :headers=headers :items=value>
-		<template v-slot:items=props>
-			<td v-for="x in Object.values(props.item)">{{ x }}</td>
+		<template #items={item}>
+			<td v-for="col in value.columns" :align="col.type === 'number' ? 'right' : 'left'">{{ item[col.name] }}</td>
 		</template>
 	</v-data-table>
 </template>
@@ -15,9 +15,9 @@ export default {
 				return [];
 			}
 
-			return Object.keys(this.value[0]).map(x => ({
-				text: x,
-				value: x,
+			return this.value.columns.map(x => ({
+				text: x.name,
+				value: x.name,
 				sortable: true,
 			}));
 		},

@@ -30,10 +30,47 @@ function loader(type, {headers, separator}) {
 }
 
 
+function getType(obj) {
+	const result = typeof obj;
+	if (result !== 'object') {
+		return result;
+	}
+	if(obj instanceof Date) {
+		return 'date';
+	}
+	return result;
+}
+
+
+function withMetaData(table) {
+	if (table.length === undefined) {
+		return table;
+	}
+	if (table.length === 0) {
+		table.columns = [];
+		return table;
+	}
+
+	const cols = Object.entries(table[0]).map(([name, val]) => ({name: name, type: getType(val)}));
+	for (let x in table.slice(1)) {
+		for (let i in cols) {
+			if (getType(x[cols[i].name]) !== cols[i].type && x[cols[i].name] !== null && x[cols[i].name] !== undefined) {
+
+				cols[i].type = 'mixed';
+			}
+		}
+	}
+
+	table.columns = cols;
+
+	return table;
+}
+
+
 export default ({app}, inject) => {
 	inject('sql', {
 		async execute(query, data) {
-			return await alasql.promise(query, data);
+			return withMetaData(await alasql.promise(query, data));
 		},
 
 		async loadTable({name, type, url}, options) {
@@ -49,7 +86,7 @@ export default ({app}, inject) => {
 		},
 
 		async previewTable({type, url}, options) {
-			return await alasql.promise(`SELECT * FROM ${loader(type, options)} LIMIT 5`, [url]);
+			return withMetaData(await alasql.promise(`SELECT * FROM ${loader(type, options)} LIMIT 5`, [url]));
 		},
 
 		async dropTable(name) {
