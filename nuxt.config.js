@@ -15,6 +15,7 @@ export default {
 	plugins: [
 		{src: '~/plugins/vue-async-computed'},
 		{src: '~/plugins/sql'},
+		{src: '~/plugins/vue-codemirror', ssr: false},
 	],
 	vuetify: {
 		theme: {

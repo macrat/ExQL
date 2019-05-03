@@ -19,7 +19,7 @@
 				<bubble-viewer :value=result v-bind.sync=bubbleOption v-else-if="active === 3" />
 				<doughnut-viewer :value=result :label.sync=label :values.sync=values v-else-if="active === 4" />
 
-				<v-textarea :value=value @input="$emit('change', $event)" :error="error !== null" />
+				<query-editor :value=value :error=error @input="$emit('change', $event)" />
 				<pre v-if="error !== null" flat class=red--text style="white-scape: pre-wrap">{{ error }}</pre>
 			</v-card-text>
 
@@ -35,6 +35,7 @@
 <script>
 import Vue from 'vue';
 
+import QueryEditor from '~/components/QueryEditor';
 import TableViewer from '~/components/TableViewer';
 import LineViewer from '~/components/LineViewer';
 import BarViewer from '~/components/BarViewer';
@@ -44,7 +45,7 @@ import DoughnutViewer from '~/components/DoughnutViewer';
 
 export default {
 	props: ['value'],
-	components: {TableViewer, LineViewer, BarViewer, BubbleViewer, DoughnutViewer},
+	components: {QueryEditor, TableViewer, LineViewer, BarViewer, BubbleViewer, DoughnutViewer},
 	data: () => ({
 		active: 1,
 		label: null,

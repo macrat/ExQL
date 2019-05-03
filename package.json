@@ -22,10 +22,12 @@
     "@nuxtjs/vuetify": "^0.5.5",
     "alasql": "^0.4.11",
     "chart.js": "^2.8.0",
+    "codemirror": "^5.46.0",
     "encoding-japanese": "^1.0.29",
     "nuxt": "^2.6.3",
     "vue-async-computed": "^3.6.1",
     "vue-chartjs": "^3.4.2",
+    "vue-codemirror": "^4.0.6",
     "xlsx": "^0.14.3"
   },
   "devDependencies": {
