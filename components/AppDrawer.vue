@@ -19,7 +19,7 @@
 						<v-btn icon @click.stop="startRemove(name)"><v-icon color=gray>delete</v-icon></v-btn>
 					</v-list-tile-action>
 				</v-list-tile>
-				<v-snackbar v-else :value=true :bottom=true :left=true :timeout=3000>
+				<v-snackbar v-else :value=true :bottom=true :timeout=3000>
 					Table has removed
 					<v-btn flat @click="cancelRemove(name)">dismiss</v-btn>
 				</v-snackbar>

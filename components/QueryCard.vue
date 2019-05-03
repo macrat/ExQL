@@ -33,7 +33,6 @@
 
 <script>
 import Vue from 'vue';
-import alasql from 'alasql';
 
 import TableViewer from '~/components/TableViewer';
 import LineViewer from '~/components/LineViewer';
@@ -68,19 +67,24 @@ export default {
 			removeTimer: null,
 		};
 	},
-	computed: {
-		result() {
-			this.$store.state.tables.stateID;  // just reference
+	asyncComputed: {
+		result: {
+			default: Object.assign([], {columns: []}),
+			async get () {
+				this.$store.state.tables.stateID;  // just reference
 
-			let result = [];
-			try {
-				result = alasql(this.value);
-			} catch(e) {
-				console.error(e);
-			}
-			result.columns = result.length > 0 ? Object.keys(result[0]) : [];
-			return result;
+				let result = [];
+				try {
+					result = await this.$sql.execute(this.value);
+				} catch(e) {
+					console.error(e);
+				}
+				result.columns = result.length > 0 ? Object.keys(result[0]) : [];
+				return result;
+			},
 		},
+	},
+	computed: {
 		types() {
 			if (this.result.length === 0) {
 				return [];
@@ -162,7 +166,7 @@ export default {
 					this.$refs.downloader.click();
 				});
 			} else {
-				alasql(`SELECT * INTO CSV("${fname}.csv", {headers:true, separator:","}) FROM ?`, [this.result]);
+				this.$sql.saveAs(fname, this.result);
 			}
 		},
 		startRemove() {

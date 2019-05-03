@@ -8,6 +8,10 @@ export default {
 	modules: [
 		'@nuxtjs/vuetify',
 	],
+	plugins: [
+		{src: '~/plugins/vue-async-computed'},
+		{src: '~/plugins/sql'},
+	],
 	vuetify: {
 		theme: {
 			primary: '#ffffff',

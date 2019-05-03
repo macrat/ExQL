@@ -3,54 +3,28 @@
 		<app-header :drawer.sync=drawer />
 		<app-drawer
 			:drawer=drawer
-			@upload="$refs.file.click()"
+			@upload="$refs.loader.load()"
 			@open="$refs.cards.create($event)" />
 
 		<v-content>
 			<query-card-list ref=cards />
 		</v-content>
 
-		<input ref=file type=file @change=upload style="display: none" multiple />
+		<table-loader ref=loader />
 	</v-app>
 </template>
 
 <script>
-import path from 'path';
-
 import AppHeader from '~/components/AppHeader';
 import AppDrawer from '~/components/AppDrawer';
 import QueryCardList from '~/components/QueryCardList';
+import TableLoader from '~/components/TableLoader';
 
 
 export default {
-	components: {AppHeader, AppDrawer, QueryCardList},
+	components: {AppHeader, AppDrawer, QueryCardList, TableLoader},
 	data() {
 		return {drawer: true};
-	},
-	methods: {
-		upload({target: {files}, srcElement}) {
-			for (let file of files) {
-				let name = path.basename(file.name, path.extname(file.name)).replace(/(^[^a-zA-Z_]|[^a-zA-Z0-9_])/g, 'X');
-				const type = path.extname(file.name) === '.xls' ? 'application/vnd.ms-excel' : file.type;
-
-				if (this.$store.state.tables.list.includes(name)) {
-					let i = 2;
-					while (this.$store.state.tables.list.includes(`${name}_${i}`)) {
-						i++;
-					}
-					name = `${name}_${i}`;
-				}
-
-				const reader = new FileReader();
-				reader.addEventListener('load', () => {
-					console.log('loaded', name, reader.result);
-					this.$store.dispatch('tables/load', {name: name, type: type, url: reader.result});
-					this.$store.commit('tables/updated');
-				});
-				reader.readAsDataURL(file);
-			}
-			srcElement.value = '';
-		},
 	},
 };
 </script>
