@@ -35,12 +35,12 @@
 <script>
 import Vue from 'vue';
 
-import QueryEditor from '~/components/QueryEditor';
-import TableViewer from '~/components/TableViewer';
-import LineViewer from '~/components/LineViewer';
-import BarViewer from '~/components/BarViewer';
-import BubbleViewer from '~/components/BubbleViewer';
-import DoughnutViewer from '~/components/DoughnutViewer';
+import QueryEditor from './QueryEditor';
+import TableViewer from './TableViewer';
+import LineViewer from './LineViewer';
+import BarViewer from './BarViewer';
+import BubbleViewer from './BubbleViewer';
+import DoughnutViewer from './DoughnutViewer';
 
 
 export default {

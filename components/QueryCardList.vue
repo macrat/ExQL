@@ -20,7 +20,7 @@
 <script>
 import Vue from 'vue';
 
-import QueryCard from '~/components/QueryCard';
+import QueryCard from './QueryCard';
 
 
 export default {
