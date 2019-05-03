@@ -1,3 +1,7 @@
+const router = process.env.DEPLOY_ENV !== 'GH_PAGES' ? {} : {
+	base: '/ExQL/',
+};
+
 export default {
 	head: {
 		title: 'ExQL - Table data explorer for SQL freak',
@@ -18,4 +22,5 @@ export default {
 			accent: '#ffffff',
 		},
 	},
+	router: router,
 };
