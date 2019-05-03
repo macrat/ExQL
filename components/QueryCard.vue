@@ -19,7 +19,8 @@
 				<bubble-viewer :value=result v-bind.sync=bubbleOption v-else-if="active === 3" />
 				<doughnut-viewer :value=result :label.sync=label :values.sync=values v-else-if="active === 4" />
 
-				<v-textarea :value=value @input="$emit('change', $event)" />
+				<v-textarea :value=value @input="$emit('change', $event)" :error="error !== null" />
+				<pre v-if="error !== null" flat class=red--text style="white-scape: pre-wrap">{{ error }}</pre>
 			</v-card-text>
 
 			<a style="display: none" :href=downloader.url :download=downloader.name ref=downloader />
@@ -49,6 +50,7 @@ export default {
 		label: null,
 		values: [],
 		bubbleOption: {x: null, y: null, r: null, c: null},
+		error: null,
 		lastValidCols: new Set(),
 		downloader: {url: '', name: ''},
 		removeTimer: null,
@@ -60,9 +62,12 @@ export default {
 				this.$store.state.tables.stateID;  // just reference
 
 				try {
-					return await this.$sql.execute(this.value);
+					const result = await this.$sql.execute(this.value);
+					this.error = null;
+					return result;
 				} catch(e) {
 					console.error(e);
+					this.error = e;
 					return Object.assign([], {columns: []});
 				}
 			},
