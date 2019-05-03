@@ -1,7 +1,7 @@
 <script>
 import {Doughnut} from 'vue-chartjs';
 
-import options from './options';
+import optionsFor from './options';
 import {DoughnutData} from './DataParser';
 
 
@@ -9,11 +9,12 @@ export default {
 	extends: Doughnut,
 	props: ['data', 'label', 'values'],
 	mounted() {
-		this.renderChart(this.chartData, options);
+		this.renderChart(this.chartData, optionsFor(this.data));
 	},
 	watch: {
 		chartData() {
-			this.renderChart(this.chartData, options);
+			console.log(this.label);
+			this.renderChart(this.chartData, optionsFor(this.data));
 		},
 	},
 	computed: {

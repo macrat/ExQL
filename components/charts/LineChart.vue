@@ -1,7 +1,7 @@
 <script>
 import {Line} from 'vue-chartjs';
 
-import options from './options';
+import optionsFor from './options';
 import {SeriesData} from './DataParser';
 
 
@@ -9,11 +9,11 @@ export default {
 	extends: Line,
 	props: ['data', 'x', 'ys'],
 	mounted() {
-		this.renderChart(this.chartData, options);
+		this.renderChart(this.chartData, optionsFor(this.ys));
 	},
 	watch: {
 		chartData() {
-			this.renderChart(this.chartData, options);
+			this.renderChart(this.chartData, optionsFor(this.ys));
 		},
 	},
 	computed: {

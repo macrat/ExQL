@@ -1,7 +1,7 @@
 <script>
 import {Bubble} from 'vue-chartjs';
 
-import options from './options';
+import optionsFor from './options';
 import {BubbleData} from './DataParser';
 
 
@@ -9,11 +9,11 @@ export default {
 	extends: Bubble,
 	props: ['data', 'x', 'y', 'r', 'c'],
 	mounted() {
-		this.renderChart(this.chartData, options);
+		this.renderChart(this.chartData, optionsFor(this.data));
 	},
 	watch: {
 		chartData() {
-			this.renderChart(this.chartData, options);
+			this.renderChart(this.chartData, optionsFor(this.data));
 		},
 	},
 	computed: {

@@ -1,5 +1,9 @@
-export default {
+export default labels => ({
 	responsive: true,
 	maintainAspectRatio: false,
-	legend: {labels: {fontColor: 'white'}},
-};
+	legend: {
+		display: labels && labels.length <= 40,
+		position: labels && labels.length > 10 ? 'right' : 'top',
+		labels: {fontColor: 'white'},
+	},
+});
