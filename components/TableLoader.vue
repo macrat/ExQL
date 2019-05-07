@@ -99,7 +99,15 @@ export default {
 		selected({target: {files}, srcElement}) {
 			for (let file of files) {
 				let name = path.basename(file.name, path.extname(file.name));
-				const type = path.extname(file.name) === '.xls' ? 'application/vnd.ms-excel' : file.type;
+                let type = file.type;
+                switch (path.extname(file.name)) {
+                case '.xls':
+                    type = 'application/vnd.ms-excel';
+                    break;
+                case '.csv':
+                    type = 'text/csv';
+                    break;
+                }
 
 				if (this.$store.state.tables.list.includes(name)) {
 					let i = 2;

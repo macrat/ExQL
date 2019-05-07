@@ -1,8 +1,18 @@
 import Vue from 'vue';
 import alasql from 'alasql';
 import xlsx from 'xlsx';
+import encoding from 'encoding-japanese';
 
 alasql['private'].externalXlsxLib = xlsx;
+
+
+function decodeURL({type, url}) {
+    if (type !== 'text/csv' && type !== 'text/plain') {
+        return url;
+    }
+
+    return encoding.convert(encoding.base64Decode(url.replace(/^data:.*,/, '')), {from: 'auto', type: 'string'});
+}
 
 
 function selector(type, {columns}) {
@@ -77,7 +87,7 @@ export default ({app}, inject) => {
 			await alasql.promise('BEGIN TRANSACTION');
 			try {
 				await alasql.promise(`CREATE TABLE ${name}`);
-				await alasql.promise(`SELECT ${selector(type, options)} INTO ${name} FROM ${loader(type, options)}`, [url]);
+				await alasql.promise(`SELECT ${selector(type, options)} INTO ${name} FROM ${loader(type, options)}`, [decodeURL({type, url})]);
 				await alasql.promise('COMMIT TRANSACTION');
 			} catch(e) {
 				await alasql.promise('ROLLBACK TRANSACTION');
@@ -86,7 +96,7 @@ export default ({app}, inject) => {
 		},
 
 		async previewTable({type, url}, options) {
-			return withMetaData(await alasql.promise(`SELECT * FROM ${loader(type, options)} LIMIT 5`, [url]));
+			return withMetaData(await alasql.promise(`SELECT * FROM ${loader(type, options)} LIMIT 5`, [decodeURL({type, url})]));
 		},
 
 		async dropTable(name) {
