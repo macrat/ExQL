@@ -12,7 +12,7 @@
 
 				<v-slide-x-transition v-for="name in $store.state.tables.list" :key=name>
 					<v-list-tile
-						@click.stop="$emit('open', name)"
+						@click.stop="open(name)"
 						v-show="removeTimer[name] === undefined">
 
 						<v-list-tile-action></v-list-tile-action>
@@ -53,6 +53,12 @@ export default {
 			clearTimeout(this.removeTimer[name]);
 			this.$set(this.removeTimer, name, undefined);
 		},
+        open(name) {
+            if (!name.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
+                name = `[${name}]`;
+            }
+            this.$emit('open', name);
+        },
 	},
 };
 </script>
