@@ -1,9 +1,8 @@
 import Vue from 'vue';
-import alasql from 'alasql';
+import TableLoader from 'sqljs-table-loader';
+import initSqlJs from 'sql.js';
 import xlsx from 'xlsx';
 import encoding from 'encoding-japanese';
-
-alasql['private'].externalXlsxLib = xlsx;
 
 
 function decodeURL({type, url}) {
@@ -12,31 +11,6 @@ function decodeURL({type, url}) {
     }
 
     return encoding.convert(encoding.base64Decode(url.replace(/^data:.*,/, '')), {from: 'auto', type: 'string'});
-}
-
-
-function selector(type, {columns}) {
-	if (!columns) {
-		return '*';
-	}
-	return Object.entries(columns).map(([from, to]) => `[${from}] as [${to}]`).join(',');
-}
-
-
-function loader(type, {headers, separator}) {
-	switch (type) {
-	case 'text/csv':
-	case 'text/plain':
-		return `CSV(?, {autoExt:false, headers:${headers}, separator:"${separator || ','}"})`;
-	case 'text/tab-separated-values':
-		return `TSV(?, {autoExt:false, headers:${headers}})`;
-	case 'application/vnd.ms-excel':
-		return `XLS(?, {autoExt:false, headers:${headers}})`;
-	case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-		return `XLSX(?, {autoExt:false, headers:${headers}})`;
-	default:
-		throw 'unsupported type';
-	}
 }
 
 
@@ -52,12 +26,12 @@ function getType(obj) {
 }
 
 
-function withMetaData(table) {
+function convertData(table) {
+	const {columns, values} = table;
+	table = values;
+	table.columns = columns;
+
 	if (table.length === undefined) {
-		return table;
-	}
-	if (table.length === 0) {
-		table.columns = [];
 		return table;
 	}
 
@@ -78,37 +52,33 @@ function withMetaData(table) {
 
 
 export default ({app}, inject) => {
-	inject('sql', {
-		async execute(query, data) {
-			return withMetaData(await alasql.promise(query, data));
-		},
+	initSqlJs().then(SQL => {
+		const db = new SQL.Database();
 
-		async loadTable({name, type, url}, options) {
-			await alasql.promise('BEGIN TRANSACTION');
-			try {
-				await alasql.promise(`CREATE TABLE ${name}`);
-				await alasql.promise(`SELECT ${selector(type, options)} INTO ${name} FROM ${loader(type, options)}`, [decodeURL({type, url})]);
-				await alasql.promise('COMMIT TRANSACTION');
-			} catch(e) {
-				await alasql.promise('ROLLBACK TRANSACTION');
-				throw e;
-			}
-		},
+		inject('sql', {
+			execute(query, data) {
+				return convertData(db.exec(query, data));
+			},
 
-		async previewTable({type, url}, options) {
-			return withMetaData(await alasql.promise(`SELECT * FROM ${loader(type, options)} LIMIT 5`, [decodeURL({type, url})]));
-		},
+			loadTable({name, type, data}, options) {
+				new TableLoader(decodeURL({type, url})).importInto(db, name, data);
+			},
 
-		async dropTable(name) {
-			return await alasql.promise(`DROP TABLE ${name}`);
-		},
+			previewTable({type, data}, options) {
+				return new TableLoader(decodeURL({type, data})).read(db, name, data).slice(0, 5);
+			},
 
-		async saveAs(name, data) {
-			return await alasql.promise(`SELECT * INTO CSV("${name}.csv", {headers:true, separator:","}) FROM ?`, [data]);
-		},
+			dropTable(name) {
+				db(`DROP TABLE ${name}`);
+			},
 
-		get tables() {
-			return Object.keys(alasql.tables);
-		},
-	});
+			convertToCSV(name, data) {
+				return xlsx.utils.sheet_to_csv(xlsx.utils.json_to_sheet(data.values));
+			},
+
+			get tables() {
+				return Object.keys(alasql.tables);
+			},
+		});
+	}).catch(e => console.error(e));
 };

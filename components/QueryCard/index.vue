@@ -131,12 +131,13 @@ export default {
 			if (canvas) {
 				this.downloader.name = fname + '.png';
 				this.downloader.url = canvas.toDataURL();
-				Vue.nextTick(() => {
-					this.$refs.downloader.click();
-				});
 			} else {
-				this.$sql.saveAs(fname, this.result);
+				this.downloader.name = fname + '.csv';
+				this.downloader.url = this.$sql.convertToCSV(fname, this.result);
 			}
+			Vue.nextTick(() => {
+				this.$refs.downloader.click();
+			});
 		},
 		startRemove() {
 			this.removeTimer = setTimeout(() => this.$emit('remove'), 4000);

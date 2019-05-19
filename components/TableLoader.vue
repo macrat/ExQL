@@ -124,10 +124,10 @@ export default {
 				const reader = new FileReader();
 				reader.addEventListener('load', () => {
 					console.log('loaded', name, reader.result);
-					this.file = {name: name, type: type, url: reader.result};
+					this.file = {name: name, type: type, data: reader.result};
 					this.loaded();
 				});
-				reader.readAsDataURL(file);
+				reader.readAsArrayBuffer(file);
 			}
 			srcElement.value = '';
 		},

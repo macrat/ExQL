@@ -13,9 +13,9 @@ export default {
 		'@nuxtjs/vuetify',
 	],
 	plugins: [
-		{src: '~/plugins/vue-async-computed'},
-		{src: '~/plugins/sql'},
-		{src: '~/plugins/vue-codemirror', ssr: false},
+		{src: '~plugins/vue-async-computed'},
+		{src: '~plugins/sql', ssr: false},
+		{src: '~plugins/vue-codemirror', ssr: false},
 	],
 	vuetify: {
 		theme: {
