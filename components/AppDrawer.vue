@@ -1,6 +1,10 @@
 <template>
 	<div>
-		<v-navigation-drawer app :permanent=drawer>
+		<v-navigation-drawer
+			app
+			:permanent="permanent && drawer"
+			:value="permanent || drawer"
+			@input="$emit('update:drawer', $event)">
 			<v-list subheader>
 				<v-toolbar flat />
 				<v-subheader>tables</v-subheader>
@@ -41,7 +45,14 @@ export default {
 	props: ['drawer'],
 	data: () => ({
 		removeTimer: {},
+		permanent: true,
 	}),
+	mounted() {
+		window.addEventListener('resize', () => {
+			this.permanent = window.innerWidth >= 800;
+		});
+		this.permanent = window.innerWidth >= 800;
+	},
 	methods: {
 		startRemove(name) {
 			this.$set(this.removeTimer, name, setTimeout(() => {

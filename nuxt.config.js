@@ -11,6 +11,7 @@ export default {
 	},
 	modules: [
 		'@nuxtjs/vuetify',
+		'@nuxtjs/pwa',
 	],
 	plugins: [
 		{src: '~/plugins/vue-async-computed'},
@@ -22,6 +23,17 @@ export default {
 			primary: '#ffffff',
 			accent: '#ffffff',
 		},
+	},
+	manifest: {
+		name: 'ExQL - Table data explorer for SQL freak',
+		short_name: 'ExQL',
+		lang: 'en',
+		title: 'ExQL',
+		'og:title': 'ExQL',
+		description: 'Table data explorer for SQL freak',
+		'og:description': 'Table data explorer for SQL freak',
+		theme_color: '#ffffff',
+		background_color: '#303030',
 	},
 	router: router,
 };

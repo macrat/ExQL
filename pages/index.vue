@@ -3,7 +3,7 @@
 		<app-header :drawer.sync=drawer />
 
 		<app-drawer
-			:drawer=drawer
+			:drawer.sync=drawer
 			@upload="$refs.loader.load()"
 			@open="$refs.cards.create($event)" />
 

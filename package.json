@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/macrat/exql#readme",
   "dependencies": {
+    "@nuxtjs/pwa": "^3.0.0-beta.16",
     "@nuxtjs/vuetify": "^0.5.5",
     "alasql": "^0.4.11",
     "chart.js": "^2.8.0",
