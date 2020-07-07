@@ -8,6 +8,9 @@ export default {
 		meta: [
 			{charset: 'utf-8'},
 		],
+		link: [
+			{rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Material+Icons'},
+		],
 	},
 	modules: [
 		'@nuxtjs/vuetify',
@@ -20,6 +23,7 @@ export default {
 	],
 	vuetify: {
 		theme: {
+			dark: true,
 			primary: '#ffffff',
 			accent: '#ffffff',
 		},

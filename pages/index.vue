@@ -1,5 +1,5 @@
 <template>
-	<v-app dark>
+	<v-app>
 		<app-header :drawer.sync=drawer />
 
 		<app-drawer
@@ -7,9 +7,9 @@
 			@upload="$refs.loader.load()"
 			@open="$refs.cards.create($event)" />
 
-		<v-content>
+		<v-main>
 			<query-card-list ref=cards />
-		</v-content>
+		</v-main>
 
 		<table-loader ref=loader @loaded="$refs.cards.create($event)" />
 	</v-app>
