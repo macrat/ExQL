@@ -19,20 +19,20 @@
   },
   "homepage": "https://github.com/macrat/exql#readme",
   "dependencies": {
-    "@nuxtjs/pwa": "^3.0.0-beta.16",
-    "@nuxtjs/vuetify": "^0.5.5",
-    "alasql": "^0.4.11",
-    "chart.js": "^2.8.0",
-    "codemirror": "^5.46.0",
-    "encoding-japanese": "^1.0.29",
-    "nuxt": "^2.6.3",
-    "vue-async-computed": "^3.6.1",
-    "vue-chartjs": "^3.4.2",
+    "@nuxtjs/pwa": "^3.0.0-beta.20",
+    "@nuxtjs/vuetify": "^1.11.2",
+    "alasql": "^0.6.2",
+    "chart.js": "^2.9.3",
+    "codemirror": "^5.55.0",
+    "encoding-japanese": "^1.0.30",
+    "nuxt": "^2.13.3",
+    "vue-async-computed": "^3.8.2",
+    "vue-chartjs": "^3.5.0",
     "vue-codemirror": "^4.0.6",
-    "xlsx": "^0.14.3"
+    "xlsx": "^0.16.3"
   },
   "devDependencies": {
-    "cross-env": "^5.2.0",
+    "cross-env": "^7.0.2",
     "push-dir": "^0.4.1"
   }
 }
